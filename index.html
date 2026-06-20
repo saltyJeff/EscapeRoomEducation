@@ -21,8 +21,8 @@
     }
 
     .timer-badge {
-      background: rgba(255, 255, 255, 0.05);
-      border: 1px solid var(--card-border);
+      background: #fffbeb;
+      border: 1px solid #fde68a;
       padding: 0.4rem 1rem;
       border-radius: 20px;
       font-family: var(--font-code);
@@ -31,12 +31,11 @@
       display: flex;
       align-items: center;
       gap: 0.5rem;
-      box-shadow: 0 0 10px rgba(245, 158, 11, 0.1);
     }
 
     .team-badge {
-      background: rgba(6, 182, 212, 0.1);
-      border: 1px solid rgba(6, 182, 212, 0.3);
+      background: #eff6ff;
+      border: 1px solid #bfdbfe;
       padding: 0.4rem 1rem;
       border-radius: 20px;
       font-size: 0.9rem;
@@ -45,7 +44,7 @@
     }
 
     .btn-leaderboard {
-      background: rgba(255, 255, 255, 0.05);
+      background: #ffffff;
       border: 1px solid var(--card-border);
       color: var(--text-main);
       padding: 0.5rem 1rem;
@@ -60,9 +59,8 @@
     }
 
     .btn-leaderboard:hover {
-      background: rgba(255, 255, 255, 0.1);
-      border-color: var(--primary);
-      box-shadow: 0 0 10px rgba(6, 182, 212, 0.2);
+      background: #f1f5f9;
+      border-color: #cbd5e1;
     }
 
     /* Main Content Layout */
@@ -95,11 +93,9 @@
     /* Glassmorphism Card style */
     .glass-card {
       background: var(--card-bg);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
       border: 1px solid var(--card-border);
-      border-radius: 16px;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+      border-radius: 12px;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
     }
 
     /* Lobby Screen Styling */
@@ -113,12 +109,11 @@
     .lobby-img-container {
       width: 100%;
       height: 250px;
-      border-radius: 12px;
+      border-radius: 8px;
       overflow: hidden;
       margin-bottom: 2rem;
       border: 1px solid var(--card-border);
-      box-shadow: 0 0 20px rgba(255, 255, 255, 0.05);
-      background: #020617;
+      background: #f1f5f9;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -131,12 +126,10 @@
     }
 
     .lobby-title {
-      font-size: 2.2rem;
+      font-size: 2rem;
       font-weight: 800;
       margin-bottom: 0.5rem;
-      background: linear-gradient(135deg, var(--text-main) 30%, var(--primary) 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
+      color: var(--text-main);
     }
 
     .lobby-subtitle {
@@ -154,20 +147,20 @@
     }
 
     .form-group label {
-      font-size: 0.9rem;
+      font-size: 0.85rem;
       font-weight: 600;
-      color: var(--primary);
+      color: var(--text-muted);
       text-transform: uppercase;
-      letter-spacing: 1px;
+      letter-spacing: 0.5px;
     }
 
     .input-field {
-      background: rgba(0, 0, 0, 0.4);
-      border: 1px solid var(--card-border);
+      background: #ffffff;
+      border: 1px solid #cbd5e1;
       color: var(--text-main);
-      padding: 0.9rem 1.2rem;
-      border-radius: 8px;
-      font-size: 1.1rem;
+      padding: 0.75rem 1rem;
+      border-radius: 6px;
+      font-size: 1rem;
       font-family: var(--font-outfit);
       transition: all 0.2s ease;
       width: 100%;
@@ -176,32 +169,26 @@
     .input-field:focus {
       outline: none;
       border-color: var(--primary);
-      box-shadow: 0 0 12px var(--primary-glow);
+      box-shadow: 0 0 0 3px var(--primary-glow);
     }
 
     .btn-submit {
-      background: linear-gradient(135deg, var(--primary) 0%, #0093e9 100%);
+      background: var(--primary);
       border: none;
       color: white;
-      padding: 1rem;
-      border-radius: 8px;
-      font-size: 1.1rem;
-      font-weight: 700;
+      padding: 0.85rem 1.5rem;
+      border-radius: 6px;
+      font-size: 1rem;
+      font-weight: 600;
       cursor: pointer;
-      transition: all 0.3s ease;
-      box-shadow: 0 4px 15px rgba(6, 182, 212, 0.3);
+      transition: all 0.2s ease;
       width: 100%;
       text-transform: uppercase;
-      letter-spacing: 1px;
+      letter-spacing: 0.5px;
     }
 
     .btn-submit:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 6px 20px rgba(6, 182, 212, 0.5);
-    }
-
-    .btn-submit:active {
-      transform: translateY(0);
+      background: #1d4ed8;
     }
 
     /* Gameplay Screen Grid Layout */
@@ -233,10 +220,10 @@
     }
 
     .room-title {
-      font-size: 1.3rem;
+      font-size: 1.25rem;
       font-weight: 700;
       text-transform: uppercase;
-      letter-spacing: 1px;
+      letter-spacing: 0.5px;
       color: var(--primary);
     }
 
@@ -249,12 +236,11 @@
     .room-img-frame {
       width: 100%;
       height: 380px;
-      border-radius: 10px;
+      border-radius: 8px;
       overflow: hidden;
       border: 1px solid var(--card-border);
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.6);
       margin-bottom: 1.5rem;
-      background: #020617;
+      background: #f1f5f9;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -267,13 +253,13 @@
     }
 
     .flavor-text-box {
-      background: rgba(0, 0, 0, 0.3);
-      border-left: 3px solid var(--secondary);
+      background: #f8fafc;
+      border-left: 4px solid var(--primary);
       padding: 1.25rem;
       border-radius: 0 8px 8px 0;
-      font-size: 1.05rem;
+      font-size: 1rem;
       line-height: 1.6;
-      color: #e5e7eb;
+      color: var(--text-main);
       min-height: 100px;
     }
 
@@ -287,7 +273,7 @@
     }
 
     .puzzle-heading {
-      font-size: 1.25rem;
+      font-size: 1.2rem;
       font-weight: 700;
       color: var(--text-main);
       display: flex;
@@ -296,23 +282,23 @@
     }
 
     .puzzle-question {
-      font-size: 1.05rem;
+      font-size: 1rem;
       line-height: 1.6;
-      color: #d1d5db;
-      background: rgba(255, 255, 255, 0.03);
+      color: var(--text-main);
+      background: #f8fafc;
       padding: 1.25rem;
       border-radius: 8px;
-      border: 1px dashed rgba(255, 255, 255, 0.1);
+      border: 1px solid var(--card-border);
     }
 
     .puzzle-question-code {
       font-family: var(--font-code);
-      font-size: 0.95rem;
-      background: #020617;
-      padding: 1rem;
-      border-radius: 8px;
-      border: 1px solid var(--card-border);
-      color: #38bdf8;
+      font-size: 0.9rem;
+      background: #f1f5f9;
+      padding: 0.75rem 1rem;
+      border-radius: 6px;
+      border: 1px solid #cbd5e1;
+      color: #0f766e;
       overflow-x: auto;
       margin-top: 0.5rem;
       white-space: pre-wrap;
@@ -336,9 +322,9 @@
     .digit-input {
       width: 50px;
       height: 60px;
-      background: rgba(0, 0, 0, 0.4);
-      border: 2px solid var(--card-border);
-      border-radius: 8px;
+      background: #ffffff;
+      border: 2px solid #cbd5e1;
+      border-radius: 6px;
       text-align: center;
       font-size: 1.8rem;
       font-family: var(--font-code);
@@ -350,7 +336,7 @@
     .digit-input:focus {
       outline: none;
       border-color: var(--primary);
-      box-shadow: 0 0 10px var(--primary-glow);
+      box-shadow: 0 0 0 3px var(--primary-glow);
     }
 
     /* On-Screen Numeric Keypad */
@@ -363,25 +349,25 @@
     }
 
     .numpad-btn {
-      background: rgba(255, 255, 255, 0.04);
-      border: 1px solid var(--card-border);
+      background: #f8fafc;
+      border: 1px solid #cbd5e1;
       color: var(--text-main);
       padding: 0.8rem;
       font-size: 1.3rem;
       font-family: var(--font-code);
-      border-radius: 8px;
+      border-radius: 6px;
       cursor: pointer;
       transition: all 0.15s ease;
     }
 
     .numpad-btn:hover {
-      background: rgba(255, 255, 255, 0.1);
-      border-color: var(--primary);
+      background: #e2e8f0;
+      border-color: #cbd5e1;
     }
 
     .numpad-btn:active {
       transform: scale(0.95);
-      background: rgba(6, 182, 212, 0.1);
+      background: #cbd5e1;
     }
 
     /* Emoji Code Room styling */
@@ -390,12 +376,6 @@
       text-align: center;
       letter-spacing: 0.5rem;
       margin: 1rem 0;
-      animation: pulseGlow 2s infinite alternate;
-    }
-
-    @keyframes pulseGlow {
-      from { text-shadow: 0 0 10px rgba(6, 182, 212, 0.2); }
-      to { text-shadow: 0 0 20px rgba(6, 182, 212, 0.6), 0 0 30px rgba(217, 70, 239, 0.4); }
     }
 
     /* A/B Option Buttons */
@@ -407,12 +387,12 @@
     }
 
     .ab-btn {
-      background: rgba(255, 255, 255, 0.03);
-      border: 1px solid var(--card-border);
-      border-radius: 12px;
-      padding: 2rem 1rem;
+      background: #ffffff;
+      border: 1px solid #cbd5e1;
+      border-radius: 8px;
+      padding: 1.5rem 1rem;
       cursor: pointer;
-      transition: all 0.3s ease;
+      transition: all 0.2s ease;
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -428,7 +408,7 @@
     }
 
     .ab-letter {
-      font-size: 2.5rem;
+      font-size: 2rem;
       font-weight: 800;
       font-family: var(--font-code);
     }
@@ -442,24 +422,15 @@
     }
 
     .ab-label {
-      font-size: 1.1rem;
+      font-size: 0.95rem;
       font-weight: 600;
       color: var(--text-main);
     }
 
     .ab-btn:hover {
-      transform: translateY(-5px);
-      background: rgba(255, 255, 255, 0.08);
-    }
-
-    .ab-btn-a:hover {
-      box-shadow: 0 10px 20px var(--secondary-glow);
-      border-color: var(--secondary);
-    }
-
-    .ab-btn-b:hover {
-      box-shadow: 0 10px 20px var(--primary-glow);
-      border-color: var(--primary);
+      transform: translateY(-2px);
+      background: #f8fafc;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
     }
 
     /* Connections 4x4 Grid */
@@ -477,9 +448,9 @@
     }
 
     .word-card {
-      background: rgba(255, 255, 255, 0.03);
-      border: 1px solid var(--card-border);
-      border-radius: 8px;
+      background: #ffffff;
+      border: 1px solid #cbd5e1;
+      border-radius: 6px;
       height: 70px;
       display: flex;
       align-items: center;
@@ -490,35 +461,35 @@
       font-weight: 600;
       cursor: pointer;
       user-select: none;
-      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-      color: #e5e7eb;
+      transition: all 0.2s ease;
+      color: var(--text-main);
     }
 
     .word-card:hover {
-      background: rgba(255, 255, 255, 0.07);
+      background: #f8fafc;
       border-color: var(--primary);
       transform: translateY(-2px);
     }
 
     .word-card.selected {
-      background: rgba(6, 182, 212, 0.15) !important;
+      background: #eff6ff !important;
       border-color: var(--primary) !important;
-      box-shadow: 0 0 12px var(--primary-glow) !important;
-      color: #fff !important;
+      color: var(--primary) !important;
+      font-weight: 700;
       transform: scale(0.97);
     }
 
     /* Solved Category Block in Connections */
     .solved-category-row {
       grid-column: span 4;
-      border-radius: 8px;
+      border-radius: 6px;
       padding: 1rem;
       text-align: center;
       display: flex;
       flex-direction: column;
       gap: 0.25rem;
       animation: categoryPop 0.4s ease-out forwards;
-      color: white;
+      color: #0f172a;
     }
 
     @keyframes categoryPop {
@@ -527,34 +498,34 @@
     }
 
     .solved-category-title {
-      font-weight: 800;
-      font-size: 0.95rem;
+      font-weight: 700;
+      font-size: 0.9rem;
       text-transform: uppercase;
-      letter-spacing: 1px;
+      letter-spacing: 0.5px;
     }
 
     .solved-category-words {
-      font-size: 0.85rem;
+      font-size: 0.8rem;
       opacity: 0.9;
       font-family: var(--font-code);
     }
 
-    /* Solved category colors */
+    /* Solved category colors - soft professional pastels */
     .cat-color-0 {
-      background: rgba(16, 185, 129, 0.8);
-      border: 1px solid #10b981;
+      background: #dcfce7;
+      border: 1px solid #86efac;
     }
     .cat-color-1 {
-      background: rgba(59, 130, 246, 0.8);
-      border: 1px solid #3b82f6;
+      background: #dbeafe;
+      border: 1px solid #93c5fd;
     }
     .cat-color-2 {
-      background: rgba(139, 92, 246, 0.8);
-      border: 1px solid #8b5cf6;
+      background: #f3e8ff;
+      border: 1px solid #c084fc;
     }
     .cat-color-3 {
-      background: rgba(217, 70, 239, 0.8);
-      border: 1px solid #d946ef;
+      background: #fce7f3;
+      border: 1px solid #fbcfe8;
     }
 
     .connections-controls {
@@ -580,19 +551,17 @@
       background: transparent;
       border: 1px solid var(--card-border);
       color: var(--text-main);
-      padding: 0.8rem 1.2rem;
-      border-radius: 8px;
+      padding: 0.75rem 1.2rem;
+      border-radius: 6px;
       font-weight: 600;
       cursor: pointer;
       transition: all 0.2s ease;
     }
 
     .btn-sec:hover {
-      background: rgba(255, 255, 255, 0.05);
-      border-color: var(--text-muted);
+      background: #f1f5f9;
+      border-color: #cbd5e1;
     }
-
-
 
     /* Victory / Celebration Screen styling */
     .victory-container {
@@ -607,29 +576,21 @@
       font-size: 4rem;
       margin-bottom: 1.5rem;
       display: inline-block;
-      animation: floatBadge 3s ease-in-out infinite alternate;
-    }
-
-    @keyframes floatBadge {
-      from { transform: translateY(0px) rotate(0deg); }
-      to { transform: translateY(-10px) rotate(5deg); }
     }
 
     .victory-title {
-      font-size: 2.8rem;
+      font-size: 2.5rem;
       font-weight: 800;
       margin-bottom: 1rem;
-      background: linear-gradient(135deg, #10b981 0%, #06b6d4 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
+      color: var(--success);
       text-transform: uppercase;
       letter-spacing: 1px;
     }
 
     .victory-summary-card {
-      background: rgba(0, 0, 0, 0.4);
+      background: #f8fafc;
       border: 1px solid var(--card-border);
-      border-radius: 12px;
+      border-radius: 8px;
       padding: 1.5rem;
       margin-bottom: 2.5rem;
       display: grid;
@@ -648,11 +609,11 @@
       font-size: 0.85rem;
       color: var(--text-muted);
       text-transform: uppercase;
-      letter-spacing: 1px;
+      letter-spacing: 0.5px;
     }
 
     .stat-val {
-      font-size: 1.5rem;
+      font-size: 1.4rem;
       font-weight: 700;
       color: var(--primary);
     }
@@ -661,8 +622,6 @@
       font-family: var(--font-code);
       color: var(--warning);
     }
-
-
 
     /* Canvas for Confetti */
     #confetti-canvas {
@@ -675,16 +634,14 @@
       pointer-events: none;
     }
 
-
-
     /* Glowing Hints */
     .hint-box {
       font-size: 0.9rem;
-      background: rgba(245, 158, 11, 0.05);
-      border: 1px solid rgba(245, 158, 11, 0.2);
-      color: #fbd38d;
+      background: #fffbeb;
+      border: 1px solid #fde68a;
+      color: #92400e;
       padding: 0.8rem 1rem;
-      border-radius: 8px;
+      border-radius: 6px;
       margin-top: 1rem;
       display: none;
     }
@@ -700,7 +657,7 @@
     }
 
     .btn-hint:hover {
-      color: var(--text-main);
+      color: #1d4ed8;
     }
   </style>
 </head>

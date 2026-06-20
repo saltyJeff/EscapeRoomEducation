@@ -15,18 +15,17 @@
   <style>
 
     .live-indicator {
-      background: rgba(16, 185, 129, 0.1);
-      border: 1px solid rgba(16, 185, 129, 0.3);
+      background: #ecfdf5;
+      border: 1px solid #a7f3d0;
       color: var(--success);
       padding: 0.5rem 1.2rem;
       border-radius: 30px;
       font-weight: 600;
       font-size: 0.9rem;
-      letter-spacing: 1px;
+      letter-spacing: 0.5px;
       display: flex;
       align-items: center;
       gap: 0.5rem;
-      box-shadow: 0 0 15px rgba(16, 185, 129, 0.15);
     }
 
     .live-dot {
@@ -64,19 +63,19 @@
     .stat-card {
       background: var(--card-bg);
       border: 1px solid var(--card-border);
-      border-radius: 14px;
+      border-radius: 12px;
       padding: 1.5rem;
       display: flex;
       flex-direction: column;
       gap: 0.5rem;
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
     }
 
     .stat-label {
       font-size: 0.85rem;
       color: var(--text-muted);
       text-transform: uppercase;
-      letter-spacing: 1px;
+      letter-spacing: 0.5px;
       font-weight: 600;
     }
 
@@ -106,7 +105,7 @@
       color: var(--text-muted);
       text-transform: uppercase;
       font-weight: 700;
-      letter-spacing: 1px;
+      letter-spacing: 0.5px;
     }
 
     .team-list {
@@ -123,27 +122,26 @@
       align-items: center;
       background: var(--card-bg);
       border: 1px solid var(--card-border);
-      border-radius: 14px;
+      border-radius: 12px;
       padding: 1.5rem;
-      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+      transition: all 0.2s ease;
+      box-shadow: 0 2px 4px -1px rgba(0, 0, 0, 0.05);
     }
 
     .team-row:hover {
-      border-color: rgba(6, 182, 212, 0.3);
-      box-shadow: 0 8px 25px rgba(6, 182, 212, 0.1);
-      transform: translateY(-2px);
+      border-color: #cbd5e1;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
     }
 
     /* Rank Badge styling */
     .rank-badge {
-      font-size: 1.6rem;
+      font-size: 1.3rem;
       font-weight: 800;
       font-family: var(--font-code);
-      width: 45px;
-      height: 45px;
+      width: 40px;
+      height: 40px;
       border-radius: 50%;
-      background: rgba(255, 255, 255, 0.05);
+      background: #f8fafc;
       border: 1px solid var(--card-border);
       display: flex;
       align-items: center;
@@ -152,24 +150,21 @@
     }
 
     .rank-1 .rank-badge {
-      background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
-      color: #000;
-      border: none;
-      box-shadow: 0 0 15px rgba(245, 158, 11, 0.4);
+      background: #fffbeb;
+      color: #b45309;
+      border: 1px solid #fde68a;
     }
 
     .rank-2 .rank-badge {
-      background: linear-gradient(135deg, #9ca3af 0%, #4b5563 100%);
-      color: #000;
-      border: none;
-      box-shadow: 0 0 15px rgba(156, 163, 175, 0.3);
+      background: #f1f5f9;
+      color: #475569;
+      border: 1px solid #cbd5e1;
     }
 
     .rank-3 .rank-badge {
-      background: linear-gradient(135deg, #b45309 0%, #78350f 100%);
-      color: #fff;
-      border: none;
-      box-shadow: 0 0 15px rgba(180, 83, 9 0.2);
+      background: #fff7ed;
+      color: #c2410c;
+      border: 1px solid #fed7aa;
     }
 
     /* Team Info styling */
@@ -180,7 +175,7 @@
     }
 
     .team-name {
-      font-size: 1.25rem;
+      font-size: 1.15rem;
       font-weight: 700;
       color: var(--text-main);
       letter-spacing: 0.5px;
@@ -209,7 +204,7 @@
       left: 0;
       right: 0;
       height: 4px;
-      background: rgba(255, 255, 255, 0.08);
+      background: #e2e8f0;
       transform: translateY(-50%);
       z-index: 1;
       border-radius: 2px;
@@ -220,7 +215,7 @@
       top: 50%;
       left: 0;
       height: 4px;
-      background: linear-gradient(90deg, var(--primary) 0%, var(--success) 100%);
+      background: var(--primary);
       transform: translateY(-50%);
       z-index: 2;
       border-radius: 2px;
@@ -229,53 +224,46 @@
 
     /* Node dots represent chambers */
     .track-node {
-      width: 32px;
-      height: 32px;
+      width: 30px;
+      height: 30px;
       border-radius: 50%;
-      background: #111827;
-      border: 2px solid rgba(255, 255, 255, 0.15);
+      background: #ffffff;
+      border: 2px solid #cbd5e1;
       display: flex;
       align-items: center;
       justify-content: center;
       position: relative;
       z-index: 3;
-      transition: all 0.3s ease;
+      transition: all 0.2s ease;
       font-size: 0.8rem;
+      color: var(--text-muted);
     }
 
     .track-node.completed {
       background: var(--success);
       border-color: var(--success);
-      color: #000;
-      box-shadow: 0 0 10px rgba(16, 185, 129, 0.4);
+      color: #ffffff;
     }
 
     .track-node.active {
-      background: #020617;
+      background: #eff6ff;
       border-color: var(--primary);
-      box-shadow: 0 0 15px var(--primary);
-      animation: pulseGlow 1.5s infinite alternate ease-in-out;
+      box-shadow: 0 0 0 3px var(--primary-glow);
       color: var(--primary);
       font-weight: 700;
     }
 
-    @keyframes pulseGlow {
-      from { box-shadow: 0 0 5px rgba(6, 182, 212, 0.3); }
-      to { box-shadow: 0 0 15px rgba(6, 182, 212, 0.8); }
-    }
-
     .track-node.locked {
-      color: rgba(255, 255, 255, 0.3);
+      color: #94a3b8;
     }
 
     /* Hover tooltips for nodes */
     .node-label {
       position: absolute;
-      top: -30px;
+      top: -32px;
       left: 50%;
       transform: translateX(-50%);
-      background: #1f2937;
-      border: 1px solid var(--card-border);
+      background: #0f172a;
       padding: 0.2rem 0.6rem;
       border-radius: 4px;
       font-size: 0.75rem;
@@ -283,7 +271,8 @@
       pointer-events: none;
       opacity: 0;
       transition: opacity 0.2s ease;
-      color: var(--text-main);
+      color: #ffffff;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     }
 
     .track-node:hover .node-label {
@@ -301,7 +290,7 @@
     .status-badge {
       padding: 0.35rem 0.85rem;
       border-radius: 6px;
-      font-size: 0.85rem;
+      font-size: 0.8rem;
       font-weight: 700;
       text-transform: uppercase;
       letter-spacing: 0.5px;
@@ -309,26 +298,22 @@
     }
 
     .status-badge.active-room {
-      background: rgba(6, 182, 212, 0.1);
-      border: 1px solid rgba(6, 182, 212, 0.3);
+      background: #eff6ff;
+      border: 1px solid #bfdbfe;
       color: var(--primary);
     }
 
     .status-badge.escaped {
-      background: rgba(16, 185, 129, 0.15);
-      border: 1px solid var(--success);
+      background: #dcfce7;
+      border: 1px solid #86efac;
       color: var(--success);
-      box-shadow: 0 0 12px rgba(16, 185, 129, 0.2);
-      animation: rainbowGlow 4s infinite linear;
     }
 
     /* Special card style for escaped teams */
     .team-row.escaped-row {
-      background: linear-gradient(135deg, rgba(16, 185, 129, 0.08) 0%, rgba(17, 24, 39, 0.8) 60%);
-      border-color: rgba(16, 185, 129, 0.3);
+      background: linear-gradient(135deg, #f0fdf4 0%, #ffffff 100%);
+      border-color: #bbf7d0;
     }
-
-
 
     /* Media query adjustments */
     @media (max-width: 900px) {

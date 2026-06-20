@@ -18,6 +18,8 @@ function fetchGameConfig() {
 
 /**
  * Dynamically injects a CSS string into document head under a specific ID.
+ * If the string contains variables but no selector block (e.g. `--primary: ...`),
+ * wraps it inside a `:root { ... }` block to ensure validity.
  * @param {string} cssText Custom CSS code to insert
  */
 function applyCssOverrides(cssText) {
@@ -27,7 +29,13 @@ function applyCssOverrides(cssText) {
     styleTag.id = 'css-overrides-style';
     document.head.appendChild(styleTag);
   }
-  styleTag.textContent = cssText;
+  
+  const trimmed = cssText.trim();
+  if (trimmed && !trimmed.includes('{')) {
+    styleTag.textContent = `:root {\n  ${trimmed}\n}`;
+  } else {
+    styleTag.textContent = cssText;
+  }
 }
 
 /**
