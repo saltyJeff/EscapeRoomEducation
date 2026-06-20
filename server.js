@@ -1,7 +1,9 @@
+require('dotenv').config();
 const http = require('http');
 const url = require('url');
 const fs = require('fs');
 const path = require('path');
+const { generateEscapeRoom } = require('./generate');
 
 const PORT = process.env.PORT || 3000;
 
@@ -20,12 +22,48 @@ const server = http.createServer((req, res) => {
   // Add CORS headers so a front-end can communicate with the server if needed
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, X-API-Key, Authorization');
 
   // Handle preflight OPTIONS request
   if (method === 'OPTIONS') {
     res.writeHead(204);
     res.end();
+    return;
+  }
+
+  // 0. POST /generate - generates config and assets in a tarball
+  if (pathname === '/generate' && method === 'POST') {
+    let body = '';
+    req.on('data', chunk => {
+      body += chunk.toString();
+    });
+    req.on('end', async () => {
+      try {
+        if (!body) {
+          res.writeHead(400);
+          res.end(JSON.stringify({ error: 'Request body is empty' }));
+          return;
+        }
+
+        const payload = JSON.parse(body);
+        const apiKey = req.headers['x-api-key'] || 
+                       (req.headers['authorization'] && req.headers['authorization'].replace(/^Bearer\s+/i, '')) || 
+                       process.env.GEMINI_API_KEY ||
+                       process.env.API_KEY;
+        
+        console.log('[Server] Initiating escape room generation...');
+        const { tarBuffer } = await generateEscapeRoom(payload, apiKey);
+        
+        res.setHeader('Content-Type', 'application/x-tar');
+        res.setHeader('Content-Disposition', 'attachment; filename="escape_room.tar"');
+        res.writeHead(200);
+        res.end(tarBuffer);
+      } catch (err) {
+        console.error('[Server Error]', err);
+        res.writeHead(500);
+        res.end(JSON.stringify({ error: err.message }));
+      }
+    });
     return;
   }
 

@@ -1,3 +1,17 @@
 {
     "topic": "string",
+    "vibe": "string",
+    "difficulty": "string",
+    "rooms": [
+        {
+            "name": "string|null",
+            "flavor_text": "string|null",
+            "question_type": "string|null",
+            "question": "string|null",
+            "answer": "string|null"
+        },
+        {
+            // more rooms
+        }
+    ]
 }

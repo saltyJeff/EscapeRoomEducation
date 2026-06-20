@@ -7,7 +7,27 @@ function fetchGameConfig() {
     .then(res => {
       if (!res.ok) throw new Error("Config not available");
       return res.json();
+    })
+    .then(config => {
+      if (config && config['css-overrides']) {
+        applyCssOverrides(config['css-overrides']);
+      }
+      return config;
     });
+}
+
+/**
+ * Dynamically injects a CSS string into document head under a specific ID.
+ * @param {string} cssText Custom CSS code to insert
+ */
+function applyCssOverrides(cssText) {
+  let styleTag = document.getElementById('css-overrides-style');
+  if (!styleTag) {
+    styleTag = document.createElement('style');
+    styleTag.id = 'css-overrides-style';
+    document.head.appendChild(styleTag);
+  }
+  styleTag.textContent = cssText;
 }
 
 /**

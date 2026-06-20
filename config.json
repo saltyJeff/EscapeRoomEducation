@@ -1,6 +1,7 @@
 {
     "game_name": "AI Dungeon Escape",
     "lobby_img": "entry.png",
+    "css-overrides": "",
     "rooms": [
         {
             "name": "dungeon",
