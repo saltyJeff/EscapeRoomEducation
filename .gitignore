@@ -19,3 +19,4 @@
 # End of https://www.toptal.com/developers/gitignore/api/web
 node_modules/
 .env
+temp_*

@@ -99,3 +99,23 @@ All endpoints support CORS (`Access-Control-Allow-Origin: *`) and return JSON re
   * **200 OK:** Returns the file with the corresponding `Content-Type`.
   * **403 Forbidden:** If the resolved path lies outside the allowed directory.
   * **404 Not Found:** If the file does not exist or is not a regular file.
+
+---
+
+### 5. Generate Escape Room Configuration and Assets (with Optional PDF)
+* **Endpoint:** `/generate`
+* **Method:** `POST`
+* **Description:** Initiates visual generation and AI text expansion to populate a full escape room package. The returned response is a raw binary tarball containing the completed `config.json`, `entry.png` lobby art, and room floor graphics (e.g. `floor_1.png`, `floor_2.png`). Optionally accepts a base64-encoded PDF to guide generation. If no PDF is provided, the server runs standard text-only generation.
+* **Headers:**
+  * `X-API-Key` or `Authorization: Bearer <key>` (optional override of the server's default Gen AI API key)
+* **Payload:**
+  * **Content-Type:** `application/json`
+  * **Fields:**
+    * `topic` (string, required): Core educational topic (e.g. "Photosynthesis").
+    * `vibe` (string, required): Visual design vibe (e.g. "Ancient Greenhouse").
+    * `difficulty` (string, required): Difficulty selection ("easy", "medium", "hard").
+    * `pdfData` (string, optional): Base64-encoded binary data of a PDF document (without the data URL scheme). If present, Gemini uses this document's text to formulate narratives and puzzle content.
+    * `rooms` (array, required): Array of room configurations. Empty fields are auto-filled by the AI.
+* **Success Response (200 OK):**
+  * **Content-Type:** `application/x-tar`
+  * **Payload:** The generated `.tar` file containing all game files.
