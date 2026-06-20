@@ -1,0 +1,1635 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="AI Dungeon Escape - An educational escape room testing your concepts on Tokenization, Prompt Engineering, GPUs, and Hallucination.">
+  <title>AI Dungeon Escape - Escape Room Education</title>
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600&family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+  
+  <link rel="stylesheet" href="common.css">
+  <script src="common.js" defer></script>
+  <style>
+
+    .game-status-nav {
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+    }
+
+    .timer-badge {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--card-border);
+      padding: 0.4rem 1rem;
+      border-radius: 20px;
+      font-family: var(--font-code);
+      font-size: 0.95rem;
+      color: var(--warning);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      box-shadow: 0 0 10px rgba(245, 158, 11, 0.1);
+    }
+
+    .team-badge {
+      background: rgba(6, 182, 212, 0.1);
+      border: 1px solid rgba(6, 182, 212, 0.3);
+      padding: 0.4rem 1rem;
+      border-radius: 20px;
+      font-size: 0.9rem;
+      color: var(--primary);
+      font-weight: 600;
+    }
+
+    .btn-leaderboard {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--card-border);
+      color: var(--text-main);
+      padding: 0.5rem 1rem;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 0.9rem;
+      font-weight: 600;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .btn-leaderboard:hover {
+      background: rgba(255, 255, 255, 0.1);
+      border-color: var(--primary);
+      box-shadow: 0 0 10px rgba(6, 182, 212, 0.2);
+    }
+
+    /* Main Content Layout */
+    main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      max-width: 1400px;
+      width: 100%;
+      margin: 0 auto;
+      padding: 2rem;
+      position: relative;
+    }
+
+    .screen {
+      display: none;
+      width: 100%;
+      animation: fadeIn 0.4s ease-out forwards;
+    }
+
+    .screen.active {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Glassmorphism Card style */
+    .glass-card {
+      background: var(--card-bg);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid var(--card-border);
+      border-radius: 16px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    }
+
+    /* Lobby Screen Styling */
+    .lobby-container {
+      max-width: 600px;
+      margin: 3rem auto;
+      padding: 2.5rem;
+      text-align: center;
+    }
+
+    .lobby-img-container {
+      width: 100%;
+      height: 250px;
+      border-radius: 12px;
+      overflow: hidden;
+      margin-bottom: 2rem;
+      border: 1px solid var(--card-border);
+      box-shadow: 0 0 20px rgba(255, 255, 255, 0.05);
+      background: #020617;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .lobby-img-container img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .lobby-title {
+      font-size: 2.2rem;
+      font-weight: 800;
+      margin-bottom: 0.5rem;
+      background: linear-gradient(135deg, var(--text-main) 30%, var(--primary) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .lobby-subtitle {
+      color: var(--text-muted);
+      font-size: 1rem;
+      margin-bottom: 2rem;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      text-align: left;
+      margin-bottom: 1.5rem;
+    }
+
+    .form-group label {
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--primary);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .input-field {
+      background: rgba(0, 0, 0, 0.4);
+      border: 1px solid var(--card-border);
+      color: var(--text-main);
+      padding: 0.9rem 1.2rem;
+      border-radius: 8px;
+      font-size: 1.1rem;
+      font-family: var(--font-outfit);
+      transition: all 0.2s ease;
+      width: 100%;
+    }
+
+    .input-field:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 12px var(--primary-glow);
+    }
+
+    .btn-submit {
+      background: linear-gradient(135deg, var(--primary) 0%, #0093e9 100%);
+      border: none;
+      color: white;
+      padding: 1rem;
+      border-radius: 8px;
+      font-size: 1.1rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 15px rgba(6, 182, 212, 0.3);
+      width: 100%;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .btn-submit:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(6, 182, 212, 0.5);
+    }
+
+    .btn-submit:active {
+      transform: translateY(0);
+    }
+
+    /* Gameplay Screen Grid Layout */
+    .gameplay-layout {
+      display: grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      gap: 2rem;
+      align-items: start;
+    }
+
+    @media (max-width: 968px) {
+      .gameplay-layout {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* Left Panel: Level & Image & Flavor Text */
+    .room-display-card {
+      padding: 1.5rem;
+    }
+
+    .room-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.25rem;
+      border-bottom: 1px solid var(--card-border);
+      padding-bottom: 0.75rem;
+    }
+
+    .room-title {
+      font-size: 1.3rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--primary);
+    }
+
+    .room-floor-indicator {
+      font-family: var(--font-code);
+      font-size: 0.9rem;
+      color: var(--text-muted);
+    }
+
+    .room-img-frame {
+      width: 100%;
+      height: 380px;
+      border-radius: 10px;
+      overflow: hidden;
+      border: 1px solid var(--card-border);
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.6);
+      margin-bottom: 1.5rem;
+      background: #020617;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .room-img-frame img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .flavor-text-box {
+      background: rgba(0, 0, 0, 0.3);
+      border-left: 3px solid var(--secondary);
+      padding: 1.25rem;
+      border-radius: 0 8px 8px 0;
+      font-size: 1.05rem;
+      line-height: 1.6;
+      color: #e5e7eb;
+      min-height: 100px;
+    }
+
+    /* Right Panel: Puzzle Form */
+    .puzzle-card {
+      padding: 2rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+      min-height: 520px;
+    }
+
+    .puzzle-heading {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--text-main);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .puzzle-question {
+      font-size: 1.05rem;
+      line-height: 1.6;
+      color: #d1d5db;
+      background: rgba(255, 255, 255, 0.03);
+      padding: 1.25rem;
+      border-radius: 8px;
+      border: 1px dashed rgba(255, 255, 255, 0.1);
+    }
+
+    .puzzle-question-code {
+      font-family: var(--font-code);
+      font-size: 0.95rem;
+      background: #020617;
+      padding: 1rem;
+      border-radius: 8px;
+      border: 1px solid var(--card-border);
+      color: #38bdf8;
+      overflow-x: auto;
+      margin-top: 0.5rem;
+      white-space: pre-wrap;
+    }
+
+    .puzzle-input-container {
+      margin-top: 1rem;
+    }
+
+    /* Segmented Code Inputs for Passcode */
+    .code-input-wrapper {
+      display: flex;
+      justify-content: space-between;
+      gap: 0.5rem;
+      margin-bottom: 1.5rem;
+      max-width: 360px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .digit-input {
+      width: 50px;
+      height: 60px;
+      background: rgba(0, 0, 0, 0.4);
+      border: 2px solid var(--card-border);
+      border-radius: 8px;
+      text-align: center;
+      font-size: 1.8rem;
+      font-family: var(--font-code);
+      font-weight: 700;
+      color: var(--primary);
+      transition: all 0.2s ease;
+    }
+
+    .digit-input:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 10px var(--primary-glow);
+    }
+
+    /* On-Screen Numeric Keypad */
+    .numpad {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0.75rem;
+      max-width: 280px;
+      margin: 0 auto 1.5rem auto;
+    }
+
+    .numpad-btn {
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--card-border);
+      color: var(--text-main);
+      padding: 0.8rem;
+      font-size: 1.3rem;
+      font-family: var(--font-code);
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .numpad-btn:hover {
+      background: rgba(255, 255, 255, 0.1);
+      border-color: var(--primary);
+    }
+
+    .numpad-btn:active {
+      transform: scale(0.95);
+      background: rgba(6, 182, 212, 0.1);
+    }
+
+    /* Emoji Code Room styling */
+    .emoji-clue-display {
+      font-size: 2.5rem;
+      text-align: center;
+      letter-spacing: 0.5rem;
+      margin: 1rem 0;
+      animation: pulseGlow 2s infinite alternate;
+    }
+
+    @keyframes pulseGlow {
+      from { text-shadow: 0 0 10px rgba(6, 182, 212, 0.2); }
+      to { text-shadow: 0 0 20px rgba(6, 182, 212, 0.6), 0 0 30px rgba(217, 70, 239, 0.4); }
+    }
+
+    /* A/B Option Buttons */
+    .ab-container {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.25rem;
+      margin-top: 1rem;
+    }
+
+    .ab-btn {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--card-border);
+      border-radius: 12px;
+      padding: 2rem 1rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .ab-btn-a {
+      border-bottom: 3px solid var(--secondary);
+    }
+
+    .ab-btn-b {
+      border-bottom: 3px solid var(--primary);
+    }
+
+    .ab-letter {
+      font-size: 2.5rem;
+      font-weight: 800;
+      font-family: var(--font-code);
+    }
+
+    .ab-btn-a .ab-letter {
+      color: var(--secondary);
+    }
+
+    .ab-btn-b .ab-letter {
+      color: var(--primary);
+    }
+
+    .ab-label {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: var(--text-main);
+    }
+
+    .ab-btn:hover {
+      transform: translateY(-5px);
+      background: rgba(255, 255, 255, 0.08);
+    }
+
+    .ab-btn-a:hover {
+      box-shadow: 0 10px 20px var(--secondary-glow);
+      border-color: var(--secondary);
+    }
+
+    .ab-btn-b:hover {
+      box-shadow: 0 10px 20px var(--primary-glow);
+      border-color: var(--primary);
+    }
+
+    /* Connections 4x4 Grid */
+    .connections-container {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .connections-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 0.6rem;
+      margin-bottom: 1rem;
+    }
+
+    .word-card {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--card-border);
+      border-radius: 8px;
+      height: 70px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 0.4rem;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      user-select: none;
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      color: #e5e7eb;
+    }
+
+    .word-card:hover {
+      background: rgba(255, 255, 255, 0.07);
+      border-color: var(--primary);
+      transform: translateY(-2px);
+    }
+
+    .word-card.selected {
+      background: rgba(6, 182, 212, 0.15) !important;
+      border-color: var(--primary) !important;
+      box-shadow: 0 0 12px var(--primary-glow) !important;
+      color: #fff !important;
+      transform: scale(0.97);
+    }
+
+    /* Solved Category Block in Connections */
+    .solved-category-row {
+      grid-column: span 4;
+      border-radius: 8px;
+      padding: 1rem;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+      animation: categoryPop 0.4s ease-out forwards;
+      color: white;
+    }
+
+    @keyframes categoryPop {
+      0% { transform: scale(0.8); opacity: 0; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+
+    .solved-category-title {
+      font-weight: 800;
+      font-size: 0.95rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .solved-category-words {
+      font-size: 0.85rem;
+      opacity: 0.9;
+      font-family: var(--font-code);
+    }
+
+    /* Solved category colors */
+    .cat-color-0 {
+      background: rgba(16, 185, 129, 0.8);
+      border: 1px solid #10b981;
+    }
+    .cat-color-1 {
+      background: rgba(59, 130, 246, 0.8);
+      border: 1px solid #3b82f6;
+    }
+    .cat-color-2 {
+      background: rgba(139, 92, 246, 0.8);
+      border: 1px solid #8b5cf6;
+    }
+    .cat-color-3 {
+      background: rgba(217, 70, 239, 0.8);
+      border: 1px solid #d946ef;
+    }
+
+    .connections-controls {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .mistakes-counter {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      font-weight: 600;
+    }
+
+    .mistake-dots {
+      color: var(--error);
+      font-size: 1.1rem;
+      letter-spacing: 2px;
+    }
+
+    .btn-sec {
+      background: transparent;
+      border: 1px solid var(--card-border);
+      color: var(--text-main);
+      padding: 0.8rem 1.2rem;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .btn-sec:hover {
+      background: rgba(255, 255, 255, 0.05);
+      border-color: var(--text-muted);
+    }
+
+
+
+    /* Victory / Celebration Screen styling */
+    .victory-container {
+      max-width: 650px;
+      margin: 2rem auto;
+      padding: 3rem;
+      text-align: center;
+      position: relative;
+    }
+
+    .victory-badge {
+      font-size: 4rem;
+      margin-bottom: 1.5rem;
+      display: inline-block;
+      animation: floatBadge 3s ease-in-out infinite alternate;
+    }
+
+    @keyframes floatBadge {
+      from { transform: translateY(0px) rotate(0deg); }
+      to { transform: translateY(-10px) rotate(5deg); }
+    }
+
+    .victory-title {
+      font-size: 2.8rem;
+      font-weight: 800;
+      margin-bottom: 1rem;
+      background: linear-gradient(135deg, #10b981 0%, #06b6d4 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .victory-summary-card {
+      background: rgba(0, 0, 0, 0.4);
+      border: 1px solid var(--card-border);
+      border-radius: 12px;
+      padding: 1.5rem;
+      margin-bottom: 2.5rem;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+      text-align: left;
+    }
+
+    .summary-stat {
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+    }
+
+    .stat-label {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .stat-val {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--primary);
+    }
+
+    .stat-val-time {
+      font-family: var(--font-code);
+      color: var(--warning);
+    }
+
+
+
+    /* Canvas for Confetti */
+    #confetti-canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 1000;
+      pointer-events: none;
+    }
+
+
+
+    /* Glowing Hints */
+    .hint-box {
+      font-size: 0.9rem;
+      background: rgba(245, 158, 11, 0.05);
+      border: 1px solid rgba(245, 158, 11, 0.2);
+      color: #fbd38d;
+      padding: 0.8rem 1rem;
+      border-radius: 8px;
+      margin-top: 1rem;
+      display: none;
+    }
+
+    .btn-hint {
+      font-size: 0.85rem;
+      color: var(--primary);
+      text-decoration: underline;
+      background: none;
+      border: none;
+      cursor: pointer;
+      align-self: flex-start;
+    }
+
+    .btn-hint:hover {
+      color: var(--text-main);
+    }
+  </style>
+</head>
+<body>
+  <!-- Decorative background components -->
+  <div class="bg-orb bg-orb-1"></div>
+  <div class="bg-orb bg-orb-2"></div>
+
+  <!-- Confetti Canvas -->
+  <canvas id="confetti-canvas"></canvas>
+
+  <!-- Header -->
+  <header>
+    <div class="logo-container">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="url(#logo-grad)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+        <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+      </svg>
+      <svg width="0" height="0">
+        <defs>
+          <linearGradient id="logo-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#06b6d4" />
+            <stop offset="100%" stop-color="#d946ef" />
+          </linearGradient>
+        </defs>
+      </svg>
+      <h1>AI DUNGEON ESCAPE</h1>
+    </div>
+
+    <div class="game-status-nav hidden" id="game-nav">
+      <div class="timer-badge" id="nav-timer">
+        ⏱️ <span id="timer-val">00:00:00</span>
+      </div>
+      <div class="team-badge" id="nav-team">TEAM: -</div>
+      <button class="btn-leaderboard" id="btn-toggle-leaderboard" aria-label="Toggle Leaderboard">
+        📊 Leaderboard
+      </button>
+    </div>
+  </header>
+
+  <!-- Sidebar Drawer / Overlay -->
+  <div class="drawer-overlay" id="leaderboard-overlay"></div>
+  <div class="leaderboard-drawer" id="leaderboard-drawer">
+    <div class="drawer-header">
+      <h2>🏆 Real-time Progress</h2>
+      <button class="btn-close-drawer" id="btn-close-leaderboard" aria-label="Close Leaderboard">&times;</button>
+    </div>
+    <div class="leaderboard-list" id="leaderboard-list">
+      <!-- Injected Dynamically -->
+    </div>
+  </div>
+
+  <!-- Main Container -->
+  <main>
+    
+    <!-- Screen 1: Lobby / Login -->
+    <section class="screen active" id="screen-lobby">
+      <div class="lobby-container glass-card">
+        <div class="lobby-img-container" id="lobby-image-frame">
+          <img id="lobby-img" src="entry.png" alt="AI Dungeon Lobby Screen">
+        </div>
+        <h2 class="lobby-title" id="lobby-game-title">AI Dungeon Escape</h2>
+        <p class="lobby-subtitle">Test your skills in AI engineering to unlock the doors and escape.</p>
+        
+        <form id="lobby-form" onsubmit="event.preventDefault(); startMission();">
+          <div class="form-group">
+            <label for="team-name-input">Team Identifier</label>
+            <input type="text" id="team-name-input" class="input-field" placeholder="Enter your team's code name..." required autocomplete="off">
+          </div>
+          <button type="submit" class="btn-submit" id="btn-lobby-submit">Begin Mission</button>
+        </form>
+      </div>
+    </section>
+
+    <!-- Screen 2: Gameplay Dashboard -->
+    <section class="screen" id="screen-gameplay">
+      <div class="gameplay-layout">
+        
+        <!-- Left Column: Display and narrative -->
+        <div class="room-display-card glass-card">
+          <div class="room-header">
+            <h2 class="room-title" id="display-room-title">Current Chamber</h2>
+            <span class="room-floor-indicator" id="display-floor-num">Floor 1 of 4</span>
+          </div>
+
+          <div class="room-img-frame">
+            <img id="room-img" src="" alt="Room Illustration">
+          </div>
+
+          <div class="flavor-text-box" id="flavor-text-display">
+            <!-- Injected via typewriter -->
+          </div>
+        </div>
+
+        <!-- Right Column: Clue and puzzle validation -->
+        <div class="puzzle-card glass-card" id="puzzle-card-element">
+          <div class="puzzle-heading">
+            🧩 <span id="puzzle-title">Decrypt the Code</span>
+          </div>
+          
+          <div class="puzzle-question" id="puzzle-question-text">
+            <!-- Injected puzzle -->
+          </div>
+
+          <!-- Dynamic Puzzle Interaction Containers -->
+          <div class="puzzle-input-container">
+            
+            <!-- Type A: Passcode numeric layout -->
+            <div id="container-passcode" class="hidden">
+              <div class="code-input-wrapper">
+                <input type="text" maxlength="1" class="digit-input" data-index="0" inputmode="numeric" pattern="[0-9]*">
+                <input type="text" maxlength="1" class="digit-input" data-index="1" inputmode="numeric" pattern="[0-9]*">
+                <input type="text" maxlength="1" class="digit-input" data-index="2" inputmode="numeric" pattern="[0-9]*">
+                <input type="text" maxlength="1" class="digit-input" data-index="3" inputmode="numeric" pattern="[0-9]*">
+                <input type="text" maxlength="1" class="digit-input" data-index="4" inputmode="numeric" pattern="[0-9]*">
+                <input type="text" maxlength="1" class="digit-input" data-index="5" inputmode="numeric" pattern="[0-9]*">
+              </div>
+              <div class="numpad">
+                <button class="numpad-btn" onclick="pressNum('1')">1</button>
+                <button class="numpad-btn" onclick="pressNum('2')">2</button>
+                <button class="numpad-btn" onclick="pressNum('3')">3</button>
+                <button class="numpad-btn" onclick="pressNum('4')">4</button>
+                <button class="numpad-btn" onclick="pressNum('5')">5</button>
+                <button class="numpad-btn" onclick="pressNum('6')">6</button>
+                <button class="numpad-btn" onclick="pressNum('7')">7</button>
+                <button class="numpad-btn" onclick="pressNum('8')">8</button>
+                <button class="numpad-btn" onclick="pressNum('9')">9</button>
+                <button class="numpad-btn" onclick="pressNum('CLR')">CLR</button>
+                <button class="numpad-btn" onclick="pressNum('0')">0</button>
+                <button class="numpad-btn" onclick="pressNum('⌫')">⌫</button>
+              </div>
+              <button class="btn-submit" onclick="submitPasscode()">Verify Security Code</button>
+            </div>
+
+            <!-- Type B: Emoji Code or Text Answer input layout -->
+            <div id="container-text" class="hidden">
+              <div class="emoji-clue-display" id="emoji-display">💬 ➡️ 🔪 ➡️ 🔢</div>
+              <div class="form-group">
+                <label for="text-answer-input">Security Answer</label>
+                <input type="text" id="text-answer-input" class="input-field" placeholder="Type answer here..." autocomplete="off">
+              </div>
+              <button class="btn-submit" onclick="submitTextAnswer()">Decrypt Lock</button>
+            </div>
+
+            <!-- Type C: A/B Multiple Choice Layout -->
+            <div id="container-ab" class="hidden">
+              <div class="ab-container">
+                <button class="ab-btn ab-btn-a" onclick="submitAB('A')">
+                  <span class="ab-letter">A</span>
+                  <span class="ab-label" id="ab-label-a">Option A</span>
+                </button>
+                <button class="ab-btn ab-btn-b" onclick="submitAB('B')">
+                  <span class="ab-letter">B</span>
+                  <span class="ab-label" id="ab-label-b">Option B</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Type D: Connections Game Layout -->
+            <div id="container-connections" class="hidden">
+              <div class="connections-container">
+                <div class="connections-grid" id="connections-grid-el">
+                  <!-- Word buttons + Solved groups injected -->
+                </div>
+                <div class="connections-controls">
+                  <div class="mistakes-counter">
+                    Mistakes: <span class="mistake-dots" id="mistake-indicators">••••</span>
+                  </div>
+                  <div style="display: flex; gap: 0.5rem;">
+                    <button class="btn-sec" onclick="deselectAllConnections()">Clear Selected</button>
+                    <button class="btn-submit" onclick="submitConnectionGroup()" style="width: auto; padding: 0.8rem 1.5rem;">Submit Group</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Hint display features -->
+          <button class="btn-hint" id="hint-toggle-btn" onclick="revealHint()">Request Hint</button>
+          <div class="hint-box" id="puzzle-hint-box">
+            <!-- Hint text generated dynamically -->
+          </div>
+
+          <!-- Status Message Indicator -->
+          <div class="feedback-message" id="puzzle-feedback">
+            Status message
+          </div>
+
+        </div>
+
+      </div>
+    </section>
+
+    <!-- Screen 3: Victory Celebration -->
+    <section class="screen" id="screen-victory">
+      <div class="victory-container glass-card">
+        <span class="victory-badge">🚁</span>
+        <h2 class="victory-title">Escape Achieved!</h2>
+        <p class="lobby-subtitle" style="margin-bottom: 2rem;">Fantastic job! Your team has navigated the AI Dungeon and successfully escaped via the helicopter.</p>
+
+        <div class="victory-summary-card">
+          <div class="summary-stat">
+            <span class="stat-label">Your Team</span>
+            <span class="stat-val" id="victory-team-name">Team Name</span>
+          </div>
+          <div class="summary-stat">
+            <span class="stat-label">Elapsed Time</span>
+            <span class="stat-val-time stat-val" id="victory-elapsed-time">00:00:00</span>
+          </div>
+        </div>
+
+        <button class="btn-submit" onclick="restartGame()" style="max-width: 250px; margin: 0 auto;">Play Again</button>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Footer -->
+  <footer>
+    <p>&copy; 2026 Escape Room Education. Designed for modern machine learning learning modules.</p>
+  </footer>
+
+  <!-- Script Logic -->
+  <script>
+    // Config and state
+    let configData = null;
+    let activeTeam = "";
+    let currentFloor = 0; // 0-indexed corresponding to configData.rooms indexes
+    let timeElapsed = 0; // in seconds
+    let timerRef = null;
+    let connectionsSelected = [];
+    let connectionsSolvedGroups = [];
+    let connectionsWordsList = [];
+    let connectionsMistakes = 0;
+    // Config values are derived dynamically based on configData.rooms.length
+
+    // Load configs from server at window launch
+    window.addEventListener('DOMContentLoaded', () => {
+      fetchConfig();
+      setupPasscodeAutoTab();
+      setupDrawerHandlers();
+      
+      // Auto poll leaderboard
+      setInterval(pollLeaderboard, 5000);
+    });
+
+    // Fetch config json
+    function fetchConfig() {
+      fetchGameConfig()
+        .then(data => {
+          configData = data;
+          document.getElementById('lobby-game-title').innerText = configData.game_name || "AI Dungeon Escape";
+          if (configData.lobby_img) {
+            document.getElementById('lobby-img').src = configData.lobby_img;
+          }
+        })
+        .catch(err => {
+          showNotification("Failed to load escape room configuration.", "error");
+          console.error(err);
+        });
+    }
+
+    // Drawer Sliding Actions
+    function setupDrawerHandlers() {
+      const drawer = document.getElementById('leaderboard-drawer');
+      const overlay = document.getElementById('leaderboard-overlay');
+      const openBtn = document.getElementById('btn-toggle-leaderboard');
+      const closeBtn = document.getElementById('btn-close-leaderboard');
+
+      const openDrawer = () => {
+        drawer.classList.add('open');
+        overlay.classList.add('open');
+        pollLeaderboard();
+      };
+
+      const closeDrawer = () => {
+        drawer.classList.remove('open');
+        overlay.classList.remove('open');
+      };
+
+      openBtn.addEventListener('click', openDrawer);
+      closeBtn.addEventListener('click', closeDrawer);
+      overlay.addEventListener('click', closeDrawer);
+    }
+
+    // Auto tabs for numeric passcode
+    function setupPasscodeAutoTab() {
+      const digits = document.querySelectorAll('.digit-input');
+      digits.forEach((input, index) => {
+        // Prevent manual text typing except numbers
+        input.addEventListener('input', (e) => {
+          e.target.value = e.target.value.replace(/[^0-9]/g, '');
+          if (e.target.value.length === 1 && index < digits.length - 1) {
+            digits[index + 1].focus();
+          }
+        });
+
+        // Handle backspace back tab
+        input.addEventListener('keydown', (e) => {
+          if (e.key === 'Backspace' && e.target.value.length === 0 && index > 0) {
+            digits[index - 1].focus();
+          }
+        });
+      });
+    }
+
+    // Get input numbers for passcode
+    function getPasscodeValue() {
+      let code = "";
+      document.querySelectorAll('.digit-input').forEach(input => {
+        code += input.value;
+      });
+      return code;
+    }
+
+    // Press virtual numpad
+    function pressNum(val) {
+      const digits = Array.from(document.querySelectorAll('.digit-input'));
+      let activeIndex = digits.findIndex(el => document.activeElement === el);
+      if (activeIndex === -1) {
+        // focus the first empty input
+        activeIndex = digits.findIndex(el => el.value === "");
+        if (activeIndex === -1) activeIndex = 5;
+        digits[activeIndex].focus();
+      }
+
+      if (val === 'CLR') {
+        digits.forEach(el => el.value = "");
+        digits[0].focus();
+      } else if (val === '⌫') {
+        if (digits[activeIndex].value !== "") {
+          digits[activeIndex].value = "";
+        } else if (activeIndex > 0) {
+          digits[activeIndex - 1].value = "";
+          digits[activeIndex - 1].focus();
+        }
+      } else {
+        digits[activeIndex].value = val;
+        if (activeIndex < 5) {
+          digits[activeIndex + 1].focus();
+        }
+      }
+    }
+
+    // Start mission
+    function startMission() {
+      const teamInput = document.getElementById('team-name-input');
+      const name = teamInput.value.trim();
+      if (!name) return;
+
+      activeTeam = name;
+      document.getElementById('nav-team').innerText = `TEAM: ${activeTeam.toUpperCase()}`;
+      
+      // Load progress from server
+      fetchTeamsProgress()
+        .then(progressMap => {
+          // If team progress exists, resume
+          if (progressMap[activeTeam] !== undefined) {
+            const savedFloor = Number(progressMap[activeTeam]);
+            const maxServerFloor = configData.rooms.length + 1;
+            if (savedFloor >= maxServerFloor) {
+              // Completed already, let them restart
+              initializeTeamProgress(1);
+            } else {
+              // Resume floor (savedFloor corresponds to server floor representation)
+              resumeGameAtFloor(savedFloor);
+            }
+          } else {
+            // New team, initialize progress to floor 1
+            initializeTeamProgress(1);
+          }
+        })
+        .catch(err => {
+          // Fallback if progress call fails
+          console.error("Failed fetching progress, starting fresh.", err);
+          resumeGameAtFloor(1);
+        });
+    }
+
+    // Initialize team progress on server
+    function initializeTeamProgress(floor) {
+      updateTeamProgress(activeTeam, floor)
+        .then(() => {
+          resumeGameAtFloor(floor);
+        })
+        .catch(err => {
+          console.error(err);
+          resumeGameAtFloor(floor);
+        });
+    }
+
+    // Setup screens and resume
+    function resumeGameAtFloor(serverFloor) {
+      // Convert serverFloor (1-indexed representation) to array floor (0-indexed)
+      currentFloor = serverFloor - 1;
+
+      // Setup game timer start
+      const startKey = `escape_room_start_${activeTeam}`;
+      let cachedStart = localStorage.getItem(startKey);
+      if (!cachedStart) {
+        cachedStart = Date.now().toString();
+        localStorage.setItem(startKey, cachedStart);
+      }
+      
+      startTimer(Number(cachedStart));
+
+      // Show header indicators
+      document.getElementById('game-nav').classList.remove('hidden');
+      
+      // Switch Screen
+      switchScreen('screen-gameplay');
+
+      // Load specific room
+      loadRoom();
+    }
+
+    // Load active chamber
+    function loadRoom() {
+      // Hide all puzzle sub-containers
+      document.getElementById('container-passcode').classList.add('hidden');
+      document.getElementById('container-text').classList.add('hidden');
+      document.getElementById('container-ab').classList.add('hidden');
+      document.getElementById('container-connections').classList.add('hidden');
+      document.getElementById('puzzle-hint-box').style.display = 'none';
+
+      // Verify if win state
+      if (currentFloor >= configData.rooms.length) {
+        triggerVictory();
+        return;
+      }
+
+      const room = configData.rooms[currentFloor];
+      
+      // Set headers
+      document.getElementById('display-room-title').innerText = room.name;
+      document.getElementById('display-floor-num').innerText = `Floor ${currentFloor + 1} of ${configData.rooms.length}`;
+      document.getElementById('room-img').src = room.img;
+
+      // Animate flavor text typewriter
+      typeWriter(document.getElementById('flavor-text-display'), room.flavor_text);
+
+      // Setup specific puzzle content
+      document.getElementById('puzzle-title').innerText = getPuzzleTitle(room.question_type);
+      
+      // Question formatting
+      const qTextEl = document.getElementById('puzzle-question-text');
+      if (room.question_type === 'passcode') {
+        const codeLength = (room.answer && room.answer.length) || 6;
+        qTextEl.innerHTML = `Solve the cipher to find the ${codeLength}-digit passcode:<div class="puzzle-question-code">${room.question}</div>`;
+        document.getElementById('container-passcode').classList.remove('hidden');
+        
+        // Dynamically create inputs based on passcode answer length
+        const wrapper = document.querySelector('.code-input-wrapper');
+        wrapper.innerHTML = '';
+        for (let i = 0; i < codeLength; i++) {
+          const input = document.createElement('input');
+          input.type = 'text';
+          input.maxLength = 1;
+          input.className = 'digit-input';
+          input.setAttribute('data-index', i);
+          input.setAttribute('inputmode', 'numeric');
+          input.setAttribute('pattern', '[0-9]*');
+          wrapper.appendChild(input);
+        }
+        setupPasscodeAutoTab();
+      } else if (room.question_type === 'emoji_code') {
+        qTextEl.innerHTML = `Identify the single-word AI concept represented by the emoji sequence below:`;
+        document.getElementById('emoji-display').innerText = room.question;
+        document.getElementById('container-text').classList.remove('hidden');
+        document.getElementById('text-answer-input').value = "";
+      } else if (room.question_type === 'ab') {
+        qTextEl.innerHTML = room.question;
+        document.getElementById('container-ab').classList.remove('hidden');
+        // Use custom options if defined, otherwise default to generic labels
+        const optA = (room.options && room.options[0]) || "Option A";
+        const optB = (room.options && room.options[1]) || "Option B";
+        document.getElementById('ab-label-a').innerText = optA;
+        document.getElementById('ab-label-b').innerText = optB;
+      } else if (room.question_type === 'connections') {
+        qTextEl.innerHTML = `Group the 16 words below into 4 distinct categories. Select 4 matching words at a time and submit!`;
+        document.getElementById('container-connections').classList.remove('hidden');
+        initializeConnectionsGame(room.groups);
+      }
+    }
+
+    // Get human-friendly titles
+    function getPuzzleTitle(type) {
+      switch(type) {
+        case 'passcode': return "Numerical Token Decryption";
+        case 'emoji_code': return "Emoji Translation Puzzle";
+        case 'ab': return "Interactive Autocomplete Choice";
+        case 'connections': return "Machine Learning Concepts Association";
+        default: return "Chamber Puzzle";
+      }
+    }
+
+    // Typewriter effect
+    function typeWriter(element, text, speed = 15) {
+      element.innerHTML = '';
+      let i = 0;
+      function type() {
+        if (i < text.length) {
+          element.innerHTML += text.charAt(i);
+          i++;
+          setTimeout(type, speed);
+        }
+      }
+      type();
+    }
+
+    // Show status logs
+    function showNotification(msg, type = "success") {
+      const fb = document.getElementById('puzzle-feedback');
+      fb.innerText = msg;
+      fb.className = `feedback-message active feedback-${type}`;
+      setTimeout(() => {
+        fb.classList.remove('active');
+      }, 4000);
+    }
+
+    // Submit passcode logic (Floor 1)
+    function submitPasscode() {
+      const room = configData.rooms[currentFloor];
+      const userVal = getPasscodeValue().trim();
+
+      if (userVal === room.answer) {
+        correctAnswerTransition();
+      } else {
+        wrongAnswerFeedback('container-passcode');
+      }
+    }
+
+    // Submit Emoji translation (Floor 2)
+    function submitTextAnswer() {
+      const room = configData.rooms[currentFloor];
+      const userVal = document.getElementById('text-answer-input').value.trim();
+
+      if (userVal.toLowerCase() === room.answer.toLowerCase()) {
+        correctAnswerTransition();
+      } else {
+        wrongAnswerFeedback('container-text');
+      }
+    }
+
+    // Submit A/B Option (Floor 3)
+    function submitAB(option) {
+      const room = configData.rooms[currentFloor];
+      // Checks A vs answer A
+      if (option.toUpperCase() === room.answer.toUpperCase()) {
+        correctAnswerTransition();
+      } else {
+        // A wrong choice in room 3 sends them all the way back to Floor 1 as per flavor text!
+        showNotification("Security failure! You chose the wrong corridor and fell back to the Dungeon!", "error");
+        
+        // Shake the option container
+        const target = document.getElementById('container-ab');
+        target.classList.add('shake');
+        setTimeout(() => target.classList.remove('shake'), 500);
+
+        // Update server progress and fall back
+        updateServerProgress(1); // Set to Floor 1
+      }
+    }
+
+    // Action on success
+    function correctAnswerTransition() {
+      showNotification("Decryption successful! The lock releases.", "success");
+      const nextRoomIndex = currentFloor + 1;
+      const nextServerFloor = nextRoomIndex + 1;
+      
+      updateServerProgress(nextServerFloor);
+    }
+
+    // Animate errors
+    function wrongAnswerFeedback(containerId) {
+      showNotification("Access Denied! Decryption mismatch.", "error");
+      const target = document.getElementById(containerId);
+      target.classList.add('shake');
+      setTimeout(() => target.classList.remove('shake'), 500);
+    }
+
+    // Push progress updates to server
+    function updateServerProgress(serverFloorNum) {
+      updateTeamProgress(activeTeam, serverFloorNum)
+        .then(data => {
+          pollLeaderboard();
+          currentFloor = serverFloorNum - 1;
+          
+          // Brief timeout to let the user see the success banner
+          setTimeout(() => {
+            loadRoom();
+          }, 1000);
+        })
+        .catch(err => {
+          console.error(err);
+          // offline backup progress
+          currentFloor = serverFloorNum - 1;
+          setTimeout(() => {
+            loadRoom();
+          }, 1000);
+        });
+    }
+
+    // Connections Puzzle Setup (Floor 4)
+    function initializeConnectionsGame(groups) {
+      connectionsSelected = [];
+      connectionsSolvedGroups = [];
+      connectionsMistakes = 0;
+      
+      // Render Mistakes
+      updateMistakesUI();
+
+      // Gather and Shuffle Words
+      let list = [];
+      groups.forEach((g, gIdx) => {
+        g.words.forEach(w => {
+          list.push({ word: w, categoryIdx: gIdx });
+        });
+      });
+      
+      // Shuffle Array
+      list.sort(() => Math.random() - 0.5);
+      connectionsWordsList = list;
+
+      renderConnectionsGrid();
+    }
+
+    function renderConnectionsGrid() {
+      const grid = document.getElementById('connections-grid-el');
+      grid.innerHTML = "";
+
+      // Render Solved categories first
+      connectionsSolvedGroups.forEach(g => {
+        const row = document.createElement('div');
+        row.className = `solved-category-row cat-color-${g.colorIdx}`;
+        row.innerHTML = `
+          <div class="solved-category-title">${g.label}</div>
+          <div class="solved-category-words">${g.words.join(', ')}</div>
+        `;
+        grid.appendChild(row);
+      });
+
+      // Render Remaining active words
+      connectionsWordsList.forEach(item => {
+        const card = document.createElement('div');
+        card.className = "word-card";
+        card.innerText = item.word;
+        if (connectionsSelected.includes(item.word)) {
+          card.classList.add('selected');
+        }
+        card.onclick = () => selectWord(item.word);
+        grid.appendChild(card);
+      });
+    }
+
+    function selectWord(word) {
+      const idx = connectionsSelected.indexOf(word);
+      if (idx > -1) {
+        // Deselect
+        connectionsSelected.splice(idx, 1);
+      } else {
+        // Select limit 4
+        if (connectionsSelected.length < 4) {
+          connectionsSelected.push(word);
+        } else {
+          // Replace last selection
+          connectionsSelected.shift();
+          connectionsSelected.push(word);
+        }
+      }
+      renderConnectionsGrid();
+    }
+
+    function deselectAllConnections() {
+      connectionsSelected = [];
+      renderConnectionsGrid();
+    }
+
+    function updateMistakesUI() {
+      const dots = "•".repeat(4 - connectionsMistakes);
+      document.getElementById('mistake-indicators').innerText = dots;
+    }
+
+    function submitConnectionGroup() {
+      if (connectionsSelected.length !== 4) {
+        showNotification("Please select exactly 4 words first.", "error");
+        return;
+      }
+
+      // Check selections against config dynamically
+      const room = configData.rooms[currentFloor];
+      if (!room || !room.groups) return;
+      const groups = room.groups;
+      let matchedIndex = -1;
+
+      for (let i = 0; i < groups.length; i++) {
+        const group = groups[i];
+        // Check if all selected words are in this group
+        const isMatch = connectionsSelected.every(w => 
+          group.words.some(gw => gw.toLowerCase() === w.toLowerCase())
+        );
+
+        if (isMatch) {
+          matchedIndex = i;
+          break;
+        }
+      }
+
+      if (matchedIndex > -1) {
+        // Correct group!
+        const matchedGroup = groups[matchedIndex];
+        connectionsSolvedGroups.push({
+          label: matchedGroup.label,
+          words: [...connectionsSelected],
+          colorIdx: matchedIndex
+        });
+
+        // Filter matched words out of active list
+        connectionsWordsList = connectionsWordsList.filter(item => 
+          !connectionsSelected.includes(item.word)
+        );
+
+        connectionsSelected = [];
+        showNotification(`Category Found: ${matchedGroup.label}!`, "success");
+        renderConnectionsGrid();
+
+        // Check if all categories completed
+        if (connectionsSolvedGroups.length === 4) {
+          setTimeout(() => {
+            correctAnswerTransition();
+          }, 1200);
+        }
+
+      } else {
+        // Wrong selection
+        connectionsMistakes++;
+        updateMistakesUI();
+        
+        showNotification("Incorrect grouping! Try again.", "error");
+        
+        // Shake cards
+        const gridEl = document.getElementById('connections-grid-el');
+        gridEl.classList.add('shake');
+        setTimeout(() => gridEl.classList.remove('shake'), 500);
+
+        // Optional: Auto reset selections on mistake after delay
+        setTimeout(() => {
+          deselectAllConnections();
+        }, 800);
+      }
+    }
+
+    // Hints utility
+    function revealHint() {
+      const room = configData.rooms[currentFloor];
+      const hintBox = document.getElementById('puzzle-hint-box');
+      
+      let hintText = "";
+      if (room.question_type === 'passcode') {
+        hintText = "HINT: Re-arrange the secret token blocks according to the order of words in 'cool is AI' -> [cool] [is] [AI]. Substitute their matching IDs.";
+      } else if (room.question_type === 'emoji_code') {
+        hintText = "HINT: The emojis depict: 'chat icon' (talking) -> 'knife' (cutting/slicing) -> 'numbers' (indices). Think of the process of splitting text into pieces of tokens.";
+      } else if (room.question_type === 'ab') {
+        hintText = "HINT: When an autocomplete engine invents plausible but factually incorrect details because it's mapping words and not checking an external database, it is said to be 'hallucinating'.";
+      } else if (room.question_type === 'connections') {
+        hintText = "HINT: Word groupings are standard AI modules: Concept Terms ('Chunks', 'IDs'...), Hardware Units ('Cores', 'Tensor'...), Engineering Rules ('Persona', 'Constraints'...), and Illusion Types ('Fabrication', 'Plausible'...).";
+      }
+
+      hintBox.innerText = hintText;
+      hintBox.style.display = 'block';
+      document.getElementById('hint-toggle-btn').style.display = 'none';
+    }
+
+    // Switch active display screen view
+    function switchScreen(screenId) {
+      document.querySelectorAll('.screen').forEach(scr => {
+        scr.classList.remove('active');
+      });
+      document.getElementById(screenId).classList.add('active');
+      
+      // Auto focus lobby input
+      if (screenId === 'screen-lobby') {
+        document.getElementById('team-name-input').focus();
+      }
+    }
+
+    // Active gameplay timer
+    function startTimer(startTimeMs) {
+      if (timerRef) clearInterval(timerRef);
+
+      timerRef = setInterval(() => {
+        const delta = Math.floor((Date.now() - startTimeMs) / 1000);
+        timeElapsed = delta;
+
+        document.getElementById('timer-val').innerText = formatTime(delta);
+      }, 1000);
+    }
+
+    // Trigger Victory Screen
+    function triggerVictory() {
+      clearInterval(timerRef);
+      localStorage.removeItem(`escape_room_start_${activeTeam}`);
+      
+      document.getElementById('game-nav').classList.add('hidden');
+      document.getElementById('victory-team-name').innerText = activeTeam.toUpperCase();
+      
+      document.getElementById('victory-elapsed-time').innerText = formatTime(timeElapsed);
+
+      switchScreen('screen-victory');
+      triggerConfetti();
+    }
+
+    // Restart game
+    function restartGame() {
+      activeTeam = "";
+      clearInterval(timerRef);
+      document.getElementById('game-nav').classList.add('hidden');
+      switchScreen('screen-lobby');
+    }
+
+    // Poll Leaderboard from server
+    function pollLeaderboard() {
+      fetchTeamsProgress()
+        .then(progressMap => {
+          const listContainer = document.getElementById('leaderboard-list');
+          listContainer.innerHTML = "";
+
+          // Sort teams by progress descending
+          const sortedTeams = Object.entries(progressMap)
+            .sort((a, b) => b[1] - a[1]);
+
+          if (sortedTeams.length === 0) {
+            listContainer.innerHTML = `<div style="text-align: center; color: var(--text-muted); margin-top: 2rem;">No teams registered yet.</div>`;
+            return;
+          }
+
+          sortedTeams.forEach(([team, floor]) => {
+            const isSelf = team.toLowerCase() === activeTeam.toLowerCase();
+            const item = document.createElement('div');
+            item.className = `leaderboard-item ${isSelf ? 'highlight' : ''}`;
+
+            // Calculate percentage completed dynamically based on total rooms
+            const maxServerFloor = (configData && configData.rooms) ? configData.rooms.length + 1 : 5;
+            const pct = Math.min((floor / maxServerFloor) * 100, 100);
+            
+            let floorLabel = `Floor ${floor}`;
+            if (floor >= maxServerFloor) {
+              floorLabel = "🚁 ESCAPED!";
+            }
+
+            item.innerHTML = `
+              <div class="item-meta">
+                <span class="item-name">${team.toUpperCase()} ${isSelf ? '(You)' : ''}</span>
+                <span class="item-floor">${floorLabel}</span>
+              </div>
+              <div class="progress-bar-track">
+                <div class="progress-bar-fill" style="width: ${pct}%"></div>
+              </div>
+            `;
+            listContainer.appendChild(item);
+          });
+        })
+        .catch(err => {
+          console.error("Error polling leaderboard:", err);
+        });
+    }
+
+    // Canvas Confetti Implementation
+    function triggerConfetti() {
+      const canvas = document.getElementById('confetti-canvas');
+      const ctx = canvas.getContext('2d');
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+
+      const colors = ['#f43f5e', '#3b82f6', '#10b981', '#eab308', '#a855f7', '#06b6d4'];
+      const particles = [];
+
+      for (let i = 0; i < 150; i++) {
+        particles.push({
+          x: Math.random() * canvas.width,
+          y: Math.random() * canvas.height - canvas.height,
+          r: Math.random() * 6 + 4,
+          d: Math.random() * canvas.height,
+          color: colors[Math.floor(Math.random() * colors.length)],
+          tilt: Math.random() * 10 - 5,
+          tiltAngleIncremental: Math.random() * 0.07 + 0.02,
+          tiltAngle: 0
+        });
+      }
+
+      let animationFrameId;
+
+      function draw() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        let active = false;
+
+        particles.forEach((p, idx) => {
+          p.tiltAngle += p.tiltAngleIncremental;
+          p.y += (Math.cos(p.d) + 3 + p.r / 2) / 2;
+          p.x += Math.sin(p.tiltAngle);
+          p.tilt = Math.sin(p.tiltAngle - idx / 3) * 15;
+
+          if (p.y <= canvas.height) {
+            active = true;
+          }
+
+          ctx.beginPath();
+          ctx.lineWidth = p.r;
+          ctx.strokeStyle = p.color;
+          ctx.moveTo(p.x + p.tilt + p.r / 2, p.y);
+          ctx.lineTo(p.x + p.tilt, p.y + p.tilt + p.r / 2);
+          ctx.stroke();
+        });
+
+        if (active) {
+          animationFrameId = requestAnimationFrame(draw);
+        } else {
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+        }
+      }
+
+      draw();
+
+      window.addEventListener('resize', () => {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+      });
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,74 @@
+{
+    "game_name": "AI Dungeon Escape",
+    "lobby_img": "entry.png",
+    "rooms": [
+        {
+            "name": "dungeon",
+            "img": "floor_1.png",
+            "flavor_text": "You awake in a dank dungeon. There is a door in front of you. It's guarded by a code. Next to it is a mysterious clue",
+            "question_type": "passcode",
+            "question": "TODO",
+            "answer": "TODO"
+        },
+        {
+            "name": "heiroglyphs",
+            "img": "floor_2.png",
+            "flavor_text": "You find yourself in a room with hieroglyphs covering the walls. A door in front of you is locked by a single word. You can make out some of the characters next to it, it appears to be simlar to the Emoji system",
+            "question_type": "emoji_code",
+            "question": "TODO: emoji sequence",
+            "answer": "TODO"
+        },
+        {
+            "name": "meeting_room",
+            "img": "floor_3.png",
+            "flavor_text": "There are two doors ahead of you. One will assist in your escape. One will send you all the way back to the first floor.",
+            "question_type": "ab",
+            "question": "TODO",
+            "answer": "TODO"
+        },
+        {
+            "name": "helicopter_pad",
+            "img": "floor_4.png",
+            "flavor_text": "You find yourself on the roof of a building. There is a helicopter waiting for you. To get out you have to make random categorizations",
+            "question_type": "connections",
+            "groups": [
+                {
+                    "label": "TODO",
+                    "words": [
+                        "word0",
+                        "word1",
+                        "word3",
+                        "word4"
+                    ]
+                },
+                {
+                    "label": "TODO",
+                    "words": [
+                        "word0",
+                        "word1",
+                        "word3",
+                        "word4"
+                    ]
+                },
+                {
+                    "label": "TODO",
+                    "words": [
+                        "word0",
+                        "word1",
+                        "word3",
+                        "word4"
+                    ]
+                },
+                {
+                    "label": "TODO",
+                    "words": [
+                        "word0",
+                        "word1",
+                        "word3",
+                        "word4"
+                    ]
+                }
+            ]
+        }
+    ]
+}

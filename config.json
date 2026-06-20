@@ -1,0 +1,74 @@
+{
+    "game_name": "AI Dungeon Escape",
+    "lobby_img": "entry.png",
+    "rooms": [
+        {
+            "name": "dungeon",
+            "img": "floor_1.png",
+            "flavor_text": "You awake in a dank dungeon. There is a door in front of you. It's guarded by a code. Next to it is a mysterious clue.",
+            "question_type": "passcode",
+            "question": "An AI tokenizer translates text into number IDs using a secret dictionary. If 'AI' = 12, 'is' = 34, and 'cool' = 56, the sentence 'AI is cool' tokenizes into the code 123456. Use this same logic to tokenize the sentence: 'cool is AI'. What is the resulting passcode?",
+            "answer": "563412"
+        },
+        {
+            "name": "heiroglyphs",
+            "img": "floor_2.png",
+            "flavor_text": "You find yourself in a room with hieroglyphs covering the walls. A door in front of you is locked by a single word. You can make out some of the characters next to it, it appears to be similar to the Emoji system.",
+            "question_type": "emoji_code",
+            "question": "💬 ➡️ 🔪 ➡️ 🔢",
+            "answer": "Tokenization"
+        },
+        {
+            "name": "meeting_room",
+            "img": "floor_3.png",
+            "flavor_text": "There are two doors ahead of you. One will assist in your escape. One will send you all the way back to the first floor.",
+            "question_type": "ab",
+            "question": "An AI is asked to write a historical biography. Because it functions like a super-powered autocomplete predicting the next most likely word rather than looking up a factual database, it flawlessly invents a fake university degree and a fictional award for the person. What is this phenomenon called? A) Hallucination or B) Optimization?",
+            "answer": "A"
+        },
+        {
+            "name": "helicopter_pad",
+            "img": "floor_4.png",
+            "flavor_text": "You find yourself on the roof of a building. There is a helicopter waiting for you. To get out you have to make random categorizations.",
+            "question_type": "connections",
+            "groups": [
+                {
+                    "label": "Tokenization Concepts",
+                    "words": [
+                        "Chunks",
+                        "IDs",
+                        "BPEs",
+                        "Vocabulary"
+                    ]
+                },
+                {
+                    "label": "GPU Components & Features",
+                    "words": [
+                        "Cores",
+                        "Parallel",
+                        "VRAM",
+                        "Tensor"
+                    ]
+                },
+                {
+                    "label": "Prompt Engineering Elements",
+                    "words": [
+                        "Persona",
+                        "Constraints",
+                        "Context",
+                        "Instructions"
+                    ]
+                },
+                {
+                    "label": "Signs of Hallucination",
+                    "words": [
+                        "Autocomplete",
+                        "Fabrication",
+                        "Plausible",
+                        "Misinformation"
+                    ]
+                }
+            ]
+        }
+    ]
+}

@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Live Leaderboard - AI Dungeon Escape Room. Real-time ranking and chamber tracking for participating teams.">
+  <title>Live Leaderboard - AI Dungeon Escape</title>
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600&family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+  
+  <link rel="stylesheet" href="common.css">
+  <script src="common.js" defer></script>
+  <style>
+
+    .live-indicator {
+      background: rgba(16, 185, 129, 0.1);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      color: var(--success);
+      padding: 0.5rem 1.2rem;
+      border-radius: 30px;
+      font-weight: 600;
+      font-size: 0.9rem;
+      letter-spacing: 1px;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      box-shadow: 0 0 15px rgba(16, 185, 129, 0.15);
+    }
+
+    .live-dot {
+      width: 8px;
+      height: 8px;
+      background: var(--success);
+      border-radius: 50%;
+      animation: blink 1.5s infinite alternate;
+    }
+
+    @keyframes blink {
+      from { opacity: 0.3; transform: scale(0.9); }
+      to { opacity: 1; transform: scale(1.2); }
+    }
+
+    /* Main Dashboard Layout */
+    main {
+      flex: 1;
+      max-width: 1300px;
+      width: 100%;
+      margin: 0 auto;
+      padding: 2.5rem 2rem;
+      display: flex;
+      flex-direction: column;
+      gap: 2.5rem;
+    }
+
+    /* Stats Overview Cards */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .stat-card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 14px;
+      padding: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+    }
+
+    .stat-label {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      font-weight: 600;
+    }
+
+    .stat-value {
+      font-size: 2.2rem;
+      font-weight: 800;
+      color: var(--text-main);
+    }
+
+    .stat-value.cyan { color: var(--primary); }
+    .stat-value.pink { color: var(--secondary); }
+    .stat-value.green { color: var(--success); }
+
+    /* Leaderboard list containers */
+    .leaderboard-container {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .leaderboard-header-row {
+      display: grid;
+      grid-template-columns: 80px 220px 1fr 140px;
+      gap: 1.5rem;
+      padding: 0 1.5rem;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      font-weight: 700;
+      letter-spacing: 1px;
+    }
+
+    .team-list {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    /* Team Card Row */
+    .team-row {
+      display: grid;
+      grid-template-columns: 80px 220px 1fr 140px;
+      gap: 1.5rem;
+      align-items: center;
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 14px;
+      padding: 1.5rem;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    }
+
+    .team-row:hover {
+      border-color: rgba(6, 182, 212, 0.3);
+      box-shadow: 0 8px 25px rgba(6, 182, 212, 0.1);
+      transform: translateY(-2px);
+    }
+
+    /* Rank Badge styling */
+    .rank-badge {
+      font-size: 1.6rem;
+      font-weight: 800;
+      font-family: var(--font-code);
+      width: 45px;
+      height: 45px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--card-border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text-muted);
+    }
+
+    .rank-1 .rank-badge {
+      background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+      color: #000;
+      border: none;
+      box-shadow: 0 0 15px rgba(245, 158, 11, 0.4);
+    }
+
+    .rank-2 .rank-badge {
+      background: linear-gradient(135deg, #9ca3af 0%, #4b5563 100%);
+      color: #000;
+      border: none;
+      box-shadow: 0 0 15px rgba(156, 163, 175, 0.3);
+    }
+
+    .rank-3 .rank-badge {
+      background: linear-gradient(135deg, #b45309 0%, #78350f 100%);
+      color: #fff;
+      border: none;
+      box-shadow: 0 0 15px rgba(180, 83, 9 0.2);
+    }
+
+    /* Team Info styling */
+    .team-info {
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+    }
+
+    .team-name {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--text-main);
+      letter-spacing: 0.5px;
+    }
+
+    /* Progress Visual Track Map Nodes */
+    .track-map-container {
+      display: flex;
+      align-items: center;
+      width: 100%;
+      padding: 0 1rem;
+    }
+
+    .progress-track-line {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
+      position: relative;
+    }
+
+    /* Behind line linking nodes */
+    .track-bg-line {
+      position: absolute;
+      top: 50%;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: rgba(255, 255, 255, 0.08);
+      transform: translateY(-50%);
+      z-index: 1;
+      border-radius: 2px;
+    }
+
+    .track-fill-line {
+      position: absolute;
+      top: 50%;
+      left: 0;
+      height: 4px;
+      background: linear-gradient(90deg, var(--primary) 0%, var(--success) 100%);
+      transform: translateY(-50%);
+      z-index: 2;
+      border-radius: 2px;
+      transition: width 0.5s ease-out;
+    }
+
+    /* Node dots represent chambers */
+    .track-node {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: #111827;
+      border: 2px solid rgba(255, 255, 255, 0.15);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      z-index: 3;
+      transition: all 0.3s ease;
+      font-size: 0.8rem;
+    }
+
+    .track-node.completed {
+      background: var(--success);
+      border-color: var(--success);
+      color: #000;
+      box-shadow: 0 0 10px rgba(16, 185, 129, 0.4);
+    }
+
+    .track-node.active {
+      background: #020617;
+      border-color: var(--primary);
+      box-shadow: 0 0 15px var(--primary);
+      animation: pulseGlow 1.5s infinite alternate ease-in-out;
+      color: var(--primary);
+      font-weight: 700;
+    }
+
+    @keyframes pulseGlow {
+      from { box-shadow: 0 0 5px rgba(6, 182, 212, 0.3); }
+      to { box-shadow: 0 0 15px rgba(6, 182, 212, 0.8); }
+    }
+
+    .track-node.locked {
+      color: rgba(255, 255, 255, 0.3);
+    }
+
+    /* Hover tooltips for nodes */
+    .node-label {
+      position: absolute;
+      top: -30px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #1f2937;
+      border: 1px solid var(--card-border);
+      padding: 0.2rem 0.6rem;
+      border-radius: 4px;
+      font-size: 0.75rem;
+      white-space: nowrap;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.2s ease;
+      color: var(--text-main);
+    }
+
+    .track-node:hover .node-label {
+      opacity: 1;
+    }
+
+    /* Right status column */
+    .status-col {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 0.25rem;
+    }
+
+    .status-badge {
+      padding: 0.35rem 0.85rem;
+      border-radius: 6px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      text-align: right;
+    }
+
+    .status-badge.active-room {
+      background: rgba(6, 182, 212, 0.1);
+      border: 1px solid rgba(6, 182, 212, 0.3);
+      color: var(--primary);
+    }
+
+    .status-badge.escaped {
+      background: rgba(16, 185, 129, 0.15);
+      border: 1px solid var(--success);
+      color: var(--success);
+      box-shadow: 0 0 12px rgba(16, 185, 129, 0.2);
+      animation: rainbowGlow 4s infinite linear;
+    }
+
+    /* Special card style for escaped teams */
+    .team-row.escaped-row {
+      background: linear-gradient(135deg, rgba(16, 185, 129, 0.08) 0%, rgba(17, 24, 39, 0.8) 60%);
+      border-color: rgba(16, 185, 129, 0.3);
+    }
+
+
+
+    /* Media query adjustments */
+    @media (max-width: 900px) {
+      .leaderboard-header-row {
+        display: none;
+      }
+      .team-row {
+        grid-template-columns: 60px 1fr;
+        gap: 1rem;
+      }
+      .track-map-container {
+        grid-column: span 2;
+        margin-top: 1rem;
+      }
+      .status-col {
+        grid-column: span 2;
+        align-items: flex-start;
+        margin-top: 0.5rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Ambient backdrop lights -->
+  <div class="bg-orb bg-orb-1"></div>
+  <div class="bg-orb bg-orb-2"></div>
+
+  <!-- Header -->
+  <header>
+    <div class="header-logo">
+      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="url(#lead-grad)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="8" r="7"></circle>
+        <polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"></polyline>
+      </svg>
+      <svg width="0" height="0">
+        <defs>
+          <linearGradient id="lead-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#06b6d4" />
+            <stop offset="100%" stop-color="#d946ef" />
+          </linearGradient>
+        </defs>
+      </svg>
+      <h1>Live Leaderboard</h1>
+    </div>
+
+    <div class="live-indicator">
+      <div class="live-dot"></div>
+      LIVE BROADCAST
+    </div>
+  </header>
+
+  <!-- Main Grid Board -->
+  <main>
+    
+    <!-- Overall Stats widgets -->
+    <section class="stats-grid" aria-label="Game Stats Overview">
+      <div class="stat-card">
+        <span class="stat-label">Total Teams</span>
+        <span class="stat-value cyan" id="stat-total-teams">0</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-label">Escaped Teams</span>
+        <span class="stat-value green" id="stat-escaped-teams">0</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-label">Completion Rate</span>
+        <span class="stat-value pink" id="stat-escape-rate">0%</span>
+      </div>
+    </section>
+
+    <!-- Leaderboard Table Structure -->
+    <section class="leaderboard-container" aria-label="Ranking Board">
+      <div class="leaderboard-header-row">
+        <span>Rank</span>
+        <span>Team</span>
+        <span style="text-align: center;">Chamber Progression Track</span>
+        <span style="text-align: right;">Status</span>
+      </div>
+
+      <div class="team-list" id="leaderboard-team-list">
+        <!-- Rendered dynamically -->
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Footer -->
+  <footer>
+    <p>&copy; 2026 Escape Room Education. Live scoring dashboard panel.</p>
+  </footer>
+
+  <!-- Script logic -->
+  <script>
+    let roomsConfig = [];
+    let previousProgress = {};
+
+    window.addEventListener('DOMContentLoaded', () => {
+      // First, fetch config to map node headers
+      fetchGameConfig()
+        .then(data => {
+          roomsConfig = data.rooms || [];
+          // Begin polling leaderboard
+          pollProgress();
+          setInterval(pollProgress, 1000);
+        })
+        .catch(err => {
+          console.error("Failed fetching config:", err);
+          // Render backup defaults if config call is unavailable
+          roomsConfig = [
+            { name: "Dungeon" },
+            { name: "Hieroglyphs" },
+            { name: "Branch Room" },
+            { name: "Helicopter Pad" }
+          ];
+          pollProgress();
+          setInterval(pollProgress, 1000);
+        });
+    });
+
+    function pollProgress() {
+      fetchTeamsProgress()
+        .then(progressMap => {
+          renderLeaderboard(progressMap);
+        })
+        .catch(err => {
+          console.error("Error fetching live progress:", err);
+        });
+    }
+
+    function renderLeaderboard(progressMap) {
+      const listEl = document.getElementById('leaderboard-team-list');
+      
+      // Sort teams by current floor progress descending
+      const sortedTeams = Object.entries(progressMap)
+        .sort((a, b) => b[1] - a[1]);
+
+      // Update stats overview cards
+      const totalTeams = sortedTeams.length;
+      const maxFloor = roomsConfig.length + 1; // maxFloor represents escaped state
+      const escapedCount = sortedTeams.filter(([_, floor]) => floor >= maxFloor).length;
+      const escapeRate = totalTeams > 0 ? Math.round((escapedCount / totalTeams) * 100) : 0;
+
+      document.getElementById('stat-total-teams').innerText = totalTeams;
+      document.getElementById('stat-escaped-teams').innerText = escapedCount;
+      document.getElementById('stat-escape-rate').innerText = `${escapeRate}%`;
+
+      if (totalTeams === 0) {
+        listEl.innerHTML = `
+          <div style="text-align: center; color: var(--text-muted); padding: 4rem 0;">
+            <p style="font-size: 1.2rem;">Waiting for teams to join the mission...</p>
+            <p style="font-size: 0.9rem; margin-top: 0.5rem; opacity: 0.7;">Teams will appear here once they select a name in index.html</p>
+          </div>`;
+        return;
+      }
+
+      // Generate HTML row elements
+      listEl.innerHTML = "";
+      sortedTeams.forEach(([team, floorVal], index) => {
+        const floor = Number(floorVal);
+        const rank = index + 1;
+        const isEscaped = floor >= maxFloor;
+
+        const row = document.createElement('div');
+        row.className = `team-row rank-${rank} ${isEscaped ? 'escaped-row' : ''}`;
+
+        // Create ranking badge text
+        let rankText = rank;
+        if (rank === 1) rankText = "👑";
+        else if (rank === 2) rankText = "🥈";
+        else if (rank === 3) rankText = "🥉";
+
+        // Create status indicators
+        let statusLabel = `Floor ${floor}`;
+        let statusClass = "active-room";
+        if (isEscaped) {
+          statusLabel = "🚁 ESCAPED";
+          statusClass = "escaped";
+        } else if (roomsConfig[floor - 1]) {
+          statusLabel = roomsConfig[floor - 1].name;
+        }
+
+        // Generate dynamic nodes progress bar track
+        let nodesHTML = "";
+        
+        // Render room nodes
+        roomsConfig.forEach((room, rIdx) => {
+          const roomFloorNum = rIdx + 1;
+          let nodeClass = "locked";
+          let nodeSymbol = rIdx + 1;
+
+          if (floor > roomFloorNum) {
+            nodeClass = "completed";
+            nodeSymbol = "✓";
+          } else if (floor === roomFloorNum) {
+            nodeClass = "active";
+            nodeSymbol = "⚡";
+          }
+
+          nodesHTML += `
+            <div class="track-node ${nodeClass}">
+              ${nodeSymbol}
+              <div class="node-label">Floor ${roomFloorNum}: ${room.name}</div>
+            </div>`;
+        });
+
+        // Add Helicopter endpoint node
+        let heliClass = "locked";
+        let heliSymbol = "🚁";
+        if (isEscaped) {
+          heliClass = "completed";
+          heliSymbol = "🏆";
+        } else if (floor === maxFloor) {
+          heliClass = "active";
+        }
+
+        nodesHTML += `
+          <div class="track-node ${heliClass}">
+            ${heliSymbol}
+            <div class="node-label">Finish: Escape!</div>
+          </div>`;
+
+        // Calculate fill percentage of tracking line
+        // Nodes are roomsConfig.length + 1
+        const totalNodes = roomsConfig.length + 1;
+        const fillPercent = Math.min(((floor - 1) / (totalNodes - 1)) * 100, 100);
+
+        row.innerHTML = `
+          <div style="display: flex; align-items: center; justify-content: center;">
+            <div class="rank-badge">${rankText}</div>
+          </div>
+          <div class="team-info">
+            <span class="team-name">${team.toUpperCase()}</span>
+            <span style="font-size: 0.8rem; color: var(--text-muted);">Current Rank: ${rank}</span>
+          </div>
+          <div class="track-map-container">
+            <div class="progress-track-line">
+              <div class="track-bg-line"></div>
+              <div class="track-fill-line" style="width: ${fillPercent}%;"></div>
+              ${nodesHTML}
+            </div>
+          </div>
+          <div class="status-col">
+            <span class="status-badge ${statusClass}">${statusLabel}</span>
+          </div>
+        `;
+
+        listEl.appendChild(row);
+      });
+    }
+  </script>
+</body>
+</html>
