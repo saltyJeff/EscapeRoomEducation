@@ -1024,7 +1024,7 @@
       if (activeIndex === -1) {
         // focus the first empty input
         activeIndex = digits.findIndex(el => el.value === "");
-        if (activeIndex === -1) activeIndex = 5;
+        if (activeIndex === -1) activeIndex = digits.length - 1;
         digits[activeIndex].focus();
       }
 
@@ -1040,7 +1040,7 @@
         }
       } else {
         digits[activeIndex].value = val;
-        if (activeIndex < 5) {
+        if (activeIndex < digits.length - 1) {
           digits[activeIndex + 1].focus();
         }
       }
