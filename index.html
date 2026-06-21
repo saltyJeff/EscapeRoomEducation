@@ -489,8 +489,11 @@
       display: flex;
       flex-direction: column;
       gap: 0.25rem;
-      animation: categoryPop 0.4s ease-out forwards;
       color: #0f172a;
+    }
+
+    .solved-category-row.animate-pop {
+      animation: categoryPop 0.4s ease-out forwards;
     }
 
     @keyframes categoryPop {
@@ -1294,12 +1297,13 @@
       // Render Solved categories first
       connectionsSolvedGroups.forEach(g => {
         const row = document.createElement('div');
-        row.className = `solved-category-row cat-color-${g.colorIdx}`;
+        row.className = `solved-category-row cat-color-${g.colorIdx}${g.newlySolved ? ' animate-pop' : ''}`;
         row.innerHTML = `
           <div class="solved-category-title">${g.label}</div>
           <div class="solved-category-words">${g.words.join(', ')}</div>
         `;
         grid.appendChild(row);
+        g.newlySolved = false; // disable animation for subsequent renders
       });
 
       // Render Remaining active words
@@ -1374,7 +1378,8 @@
         connectionsSolvedGroups.push({
           label: matchedGroup.label,
           words: [...connectionsSelected],
-          colorIdx: matchedIndex
+          colorIdx: matchedIndex,
+          newlySolved: true
         });
 
         // Filter matched words out of active list
