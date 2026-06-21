@@ -6,9 +6,9 @@
 }
 
 :root {
-  --bg-color: #f8fafc;
-  --card-bg: #ffffff;
-  --card-border: #e2e8f0;
+  --bg-color: #ebdcb9;
+  --card-bg: transparent;
+  --card-border: rgba(0, 0, 0, 0.08);
   --text-main: #0f172a;
   --text-muted: #64748b;
   --primary: #2563eb;
@@ -25,7 +25,8 @@
 }
 
 body {
-  background-color: var(--bg-color);
+  background: linear-gradient(135deg, #f7f1e3 0%, #e6d6b8 50%, #d8c4a0 100%);
+  background-attachment: fixed;
   color: var(--text-main);
   font-family: var(--font-outfit);
   min-height: 100vh;
@@ -43,9 +44,10 @@ body {
 /* Header Styling */
 header {
   padding: 1rem 2rem;
-  background: #ffffff;
+  background: rgba(247, 241, 227, 0.8);
+  backdrop-filter: blur(8px);
   border-bottom: 1px solid var(--card-border);
-  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05);
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.03);
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -80,7 +82,7 @@ footer {
   font-size: 0.85rem;
   color: var(--text-muted);
   margin-top: auto;
-  background: #ffffff;
+  background: transparent;
 }
 
 /* Sliding Leaderboard Sidebar Drawer */
@@ -90,7 +92,7 @@ footer {
   right: -360px;
   width: 360px;
   height: 100%;
-  background: #ffffff;
+  background: #fdfaf2;
   border-left: 1px solid var(--card-border);
   box-shadow: -5px 0 25px rgba(0, 0, 0, 0.05);
   z-index: 100;
@@ -141,7 +143,7 @@ footer {
 }
 
 .leaderboard-item {
-  background: #f8fafc;
+  background: rgba(0, 0, 0, 0.02);
   border: 1px solid var(--card-border);
   border-radius: 8px;
   padding: 0.8rem 1rem;
@@ -151,8 +153,8 @@ footer {
 }
 
 .leaderboard-item.highlight {
-  border-color: #bfdbfe;
-  background: #f0f9ff;
+  border-color: rgba(37, 99, 235, 0.2);
+  background: rgba(37, 99, 235, 0.05);
 }
 
 .item-meta {
